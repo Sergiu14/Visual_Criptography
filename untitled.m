@@ -253,6 +253,7 @@ function slider2_Callback(hObject, eventdata, handles)
     J=J+editbrightness;
 
     I=rgb2gray(J);
+    handles.greyImage=I;
     O=im2bw(I);
     axes(handles.axes2)
     imshow(J);
@@ -494,24 +495,30 @@ function pushbutton2_Callback(hObject, eventdata, handles)
           vec=reshape(pixelmat,1,[]);
           %disp(vec);
           pixelGray=bi2de(vec);
-          if pixelGray < 100
-              pixelGray=0;
-          end
-          if pixelGray > 220
-              pixelGray=255;
-          end
+%           if pixelGray < 100
+%               pixelGray=0;
+%           end
+%           if pixelGray > 220
+%               pixelGray=255;
+%           end
           NewGray(counter)=pixelGray;
           counter=counter+1;
        end
         
     end
-
+    
     [w h]=size(SH(:,:,1));
     disp(w);
     disp(h);
     NewGray=uint8(NewGray);
-
+    
     NewGray=vec2mat(NewGray,w/3*mExpansion);
+    for i=1:1:w/3
+       for j=2:2:h/3
+          NewGray(i,j-1)=NewGray(i,j); 
+       end
+        
+    end
     NewGray=uint8(NewGray);
     axes(handles.axes13)
     imshow(NewGray);
@@ -687,19 +694,58 @@ function pushbutton7_Callback(hObject, eventdata, handles)
 
 disp(folder);
 handles.sh1=imread([folder '\sh1.bmp']);
+handles.sh1=im2bw(handles.sh1);
 axes(handles.axes5)
 imshow(handles.sh1);
 handles.sh2=imread([folder '\sh2.bmp']);
+handles.sh2=im2bw(handles.sh2);
 axes(handles.axes6)
 imshow(handles.sh2);
 objout = bitxor(handles.sh1,handles.sh2);
 
-
+    [width height]=size(handles.sh1);
+    disp(width);
+    disp(height);
+    counter=1;
+    for i=1:1:width/3
+       for j=1:1:height/3
+          pixelmat=objout(i*3-2:i*3,j*3-2:j*3);
+          %pixelmat=pixelmat';
+          vec=reshape(pixelmat,1,[]);
+          %disp(vec);
+          %pause(5);
+          pixelGray=bi2de(vec);
+%           if pixelGray < 100
+%               pixelGray=0;
+%           end
+%           if pixelGray > 220
+%               pixelGray=255;
+%           end
+            
+          NewGray(counter)=pixelGray;
+          counter=counter+1;
+       end
+        
+    end
+    
+    [w h]=size(handles.sh1);
+    disp(w);
+    disp(h);
+    NewGray=uint8(NewGray);
+    
+    NewGray=vec2mat(NewGray,w/3*2);
+    for i=1:1:w/3
+       for j=2:2:h/3
+          NewGray(i,j-1)=NewGray(i,j); 
+       end
+        
+    end
+    NewGray=uint8(NewGray);
 
 
 
  axes(handles.axes13)
- imshow(objout);
+ imshow(NewGray);
 handles.sh3=imread([folder '\sh3.bmp']);
 axes(handles.axes7)
 imshow(handles.sh3);
@@ -852,12 +898,12 @@ function pushbutton9_Callback(hObject, eventdata, handles)
           vec=reshape(pixelmat,1,[]);
           %disp(vec);
           pixelGray=bi2de(vec);
-          if pixelGray < 50
-              pixelGray=0;
-          end
-          if pixelGray > 220
-              pixelGray=255;
-          end
+%           if pixelGray < 50
+%               pixelGray=0;
+%           end
+%           if pixelGray > 220
+%               pixelGray=255;
+%           end
           NewGray(counter)=pixelGray;
           counter=counter+1;
        end
@@ -869,6 +915,14 @@ function pushbutton9_Callback(hObject, eventdata, handles)
     NewGray=uint8(NewGray);
 
     NewGray=vec2mat(NewGray,w/3*mExpansion);
+    
+    for i=1:1:w/3
+       for j=2:3:h/3
+          NewGray(i,j-1)=NewGray(i,j);
+          NewGray(i,j+1)=NewGray(i,j); 
+       end
+        
+    end
     NewGray=uint8(NewGray);
     axes(handles.axes13)
     imshow(NewGray);
